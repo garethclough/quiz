@@ -17,6 +17,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="36dp"
+        android:textColor="@color/white"
         />
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -39,11 +40,19 @@
                 android:textStyle="bold"
                 android:textColor="#7A8089"
                 android:textSize="16sp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Please enter your name"
+                android:textStyle="bold"
+                android:textColor="#7A8089"
+                android:textSize="16sp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
