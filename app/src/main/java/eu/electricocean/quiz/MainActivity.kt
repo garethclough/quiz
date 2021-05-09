@@ -1,21 +1,29 @@
 package eu.electricocean.quiz
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.Toast
+import eu.electricocean.quiz.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-        btn_start.setOnClickListener {
-            Toast.makeText(this,"Please enter your name",Toast.LENGTH_SHORT)
-            if(et_name.text.toString().isEmpty()) {
-                Toast.makeText(this,"Please enter your name",Toast.LENGTH_SHORT)
+        binding.btnStart.setOnClickListener {
+            if(binding.etName.text.toString().isEmpty()) {
+                Toast.makeText(this,"Please enter your name",Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this,QuizQuestionsActivity::class.java)
+                startActivity(intent)
+                finish()
             }
         }
     }
