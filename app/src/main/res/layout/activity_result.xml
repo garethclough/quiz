@@ -18,12 +18,13 @@
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold"/>
+
     <ImageView
         android:id="@+id/iv_trophy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="244dp"
+        android:layout_height="101dp"
         android:contentDescription="image"
-        android:src="@drawable/ic_trophy"/>
+        android:src="@drawable/ic_trophy" />
     <TextView
         android:id="@+id/tv_congratulations"
         android:layout_width="wrap_content"
