@@ -3,13 +3,15 @@ package eu.electricocean.quiz
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import eu.electricocean.quiz.databinding.ActivityQuizQuestionsBinding
 
 class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
@@ -19,6 +21,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private var mSelectedOptionPosition : Int = 0
     private var mCorrectAnswers: Int = 0
     private var mUserName: String? = null
+    private var options: ArrayList<TextView> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,23 +32,37 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
         mQuestionsList = Constants.getQuestions()
         setQuestion()
-        binding.tvOptionOne.setOnClickListener(this)
-        binding.tvOptionTwo.setOnClickListener(this)
-        binding.tvOptionThree.setOnClickListener(this)
-        binding.tvOptionFour.setOnClickListener(this)
         binding.btnSubmit.setOnClickListener(this)
     }
 
     private fun setQuestion() {
+        for(option in options) {
+            binding.optionLayout.removeView(option as View)
+        }
+        options.clear()
         val question: Question? = mQuestionsList?.get(mCurrentPosition - 1)
         binding.progressBar.progress = mCurrentPosition
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
         binding.tvQuestion.text = question!!.question
         binding.ivImage.setImageResource(question.image)
-        binding.tvOptionOne.text = question.optionOne
-        binding.tvOptionTwo.text = question.optionTwo
-        binding.tvOptionThree.text = question.optionThree
-        binding.tvOptionFour.text = question.optionFour
+        val params: LinearLayout.LayoutParams =
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        params.setMargins(10, 10, 10, 10)
+        for(optionText in question.options) {
+            val tvOption = TextView(this)
+            tvOption.setId(View.generateViewId())
+            tvOption.setText(optionText)
+            tvOption.setTextSize(20.toFloat())
+            tvOption.setTextColor(Color.BLACK)
+            tvOption.setPadding(15)
+            tvOption.setBackgroundResource(R.drawable.default_option_border_bg)
+            tvOption.setLayoutParams(params)
+            tvOption.setGravity(Gravity.CENTER)
+            tvOption.setOnClickListener(this)
+            binding.optionLayout.addView(tvOption)
+            options?.add(tvOption)
+        }
+
         defaultOptionsView()
         if (mCurrentPosition == mQuestionsList!!.size) {
             binding.btnSubmit.text = "FINISH"
@@ -55,12 +72,6 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun defaultOptionsView() {
-        val options = ArrayList<TextView>()
-        options.add(0,binding.tvOptionOne)
-        options.add(1,binding.tvOptionTwo)
-        options.add(2,binding.tvOptionThree)
-        options.add(3,binding.tvOptionFour)
-
         for (option in options) {
             option.setTextColor(Color.parseColor("#7A8089"))
             option.typeface = Typeface.DEFAULT
@@ -72,19 +83,15 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        var optionNumber: Int = 1
+        for(option in options!!) {
+            if (v == option) {
+                selectedOptionView(option,optionNumber)
+            }
+            optionNumber++
+        }
+
         when(v?.id) {
-            R.id.tv_option_one ->{
-                selectedOptionView(binding.tvOptionOne,1)
-            }
-            R.id.tv_option_two ->{
-                selectedOptionView(binding.tvOptionTwo,2)
-            }
-            R.id.tv_option_three ->{
-                selectedOptionView(binding.tvOptionThree,4)
-            }
-            R.id.tv_option_four ->{
-                selectedOptionView(binding.tvOptionFour,5)
-            }
             R.id.btn_submit ->{
                 if (mSelectedOptionPosition == 0) {
                     mCurrentPosition++
@@ -121,20 +128,8 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun answerView(answer: Int,drawableView: Int) {
-        when(answer) {
-            1 ->{
-                binding.tvOptionOne.background = ContextCompat.getDrawable(this,drawableView)
-            }
-            2 ->{
-                binding.tvOptionTwo.background = ContextCompat.getDrawable(this,drawableView)
-            }
-            3 ->{
-                binding.tvOptionThree.background = ContextCompat.getDrawable(this,drawableView)
-            }
-            4 ->{
-                binding.tvOptionFour.background = ContextCompat.getDrawable(this,drawableView)
-            }
-        }
+        var option: TextView = options.get(answer-1)
+        option.setBackground(ContextCompat.getDrawable(this,drawableView))
     }
 
     private fun selectedOptionView(tv: TextView, selectedOptionNum: Int) {
