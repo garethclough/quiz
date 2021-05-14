@@ -30,7 +30,8 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
 
         mUserName = intent.getStringExtra(Constants.USER_NAME)
 
-        mQuestionsList = Constants.getQuestions()
+        var dbHelper: QuizDbHelper = QuizDbHelper(this)
+        mQuestionsList = dbHelper.getAllQuestions()
         setQuestion()
         binding.btnSubmit.setOnClickListener(this)
     }
@@ -44,11 +45,12 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         binding.progressBar.progress = mCurrentPosition
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
         binding.tvQuestion.text = question!!.question
-        binding.ivImage.setImageResource(question.image)
+        binding.ivImage.setImageResource(question!!.image!!)
+
         val params: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         params.setMargins(10, 10, 10, 10)
-        for(optionText in question.options) {
+        for(optionText in question.options!!) {
             val tvOption = TextView(this)
             tvOption.setId(View.generateViewId())
             tvOption.setText(optionText)
@@ -115,7 +117,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                     } else {
                         mCorrectAnswers++
                     }
-                    answerView(question.correctAnswer,R.drawable.correct_option_border_bg)
+                    answerView(question.correctAnswer!!,R.drawable.correct_option_border_bg)
                     if(mCurrentPosition == mQuestionsList!!.size) {
                         binding.btnSubmit.text = "FINISH"
                     } else {

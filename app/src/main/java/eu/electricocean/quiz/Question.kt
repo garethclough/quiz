@@ -1,9 +1,9 @@
 package eu.electricocean.quiz
 
 data class Question (
-    val id:Int,
-    val question:String,
-    val image: Int,
-    val options: Array<String>,
-    val correctAnswer: Int
+    var id:Int? = null,
+    var question:String? = null,
+    var image: Int? = null,
+    var options: ArrayList<String> = ArrayList<String>(),
+    var correctAnswer: Int? = null
 )
