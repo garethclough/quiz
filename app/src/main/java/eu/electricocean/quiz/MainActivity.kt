@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "http://quiz.electricocean.eu/get"
+        val url = "http://quiz.electricocean.eu/getFlags"
 
         // Request a string response from the provided URL.
         val request = JsonArrayRequest(
@@ -34,10 +34,14 @@ class MainActivity : AppCompatActivity() {
             null,
             { response ->
                 try {
+                    val filename = "myfile"
                     for (i in 0 until response.length()) {
-                        val question: JSONObject = response.getJSONObject(i)
-                        val questionString: String = question.getString("question")
-                        Log.d(Constants.LOGTAG,questionString)
+                        val flagJson: JSONObject = response.getJSONObject(i)
+                        val country: String = flagJson.getString("country_name")
+                        val flagId: Int = flagJson.getInt("flag_id")
+                        var flag = Flag(flagId,country)
+                        Constants.flags.add(flag)
+                        Log.d(Constants.LOGTAG,country)
                     }
                 } catch (e: JSONException) {
                     Log.d(Constants.LOGTAG,e.message!!)
