@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity() {
             null,
             { response ->
                 try {
-                    val filename = "myfile"
                     for (i in 0 until response.length()) {
                         val flagJson: JSONObject = response.getJSONObject(i)
                         val country: String = flagJson.getString("country_name")
@@ -42,6 +41,20 @@ class MainActivity : AppCompatActivity() {
                         var flag = Flag(flagId,country)
                         Constants.flags.add(flag)
                         Log.d(Constants.LOGTAG,country)
+                    }
+                    for(flag in Constants.flags) {
+                        val flagImageUrl: String = "http://quiz.electricocean.eu/flag/"+flag.id+".svg"
+                        val flagImageRequest = StringRequest(
+                            Request.Method.GET,
+                            flagImageUrl,
+                            Response.Listener<String>{ response ->
+                                Log.d(Constants.LOGTAG,"here")
+                            },
+                            Response.ErrorListener {
+                                Log.d(Constants.LOGTAG,"that didnt work")
+                            }
+                        )
+                        queue.add(flagImageRequest)
                     }
                 } catch (e: JSONException) {
                     Log.d(Constants.LOGTAG,e.message!!)
