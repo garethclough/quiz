@@ -1,20 +1,23 @@
 package eu.electricocean.quiz
 
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
-import com.android.volley.Response
+import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import eu.electricocean.quiz.databinding.ActivityMainBinding
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.OutputStream
+import java.io.PrintStream
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
+
         val url = "http://quiz.electricocean.eu/getFlags"
 
         // Request a string response from the provided URL.
@@ -48,7 +52,14 @@ class MainActivity : AppCompatActivity() {
                             Request.Method.GET,
                             flagImageUrl,
                             Response.Listener<String>{ response ->
-                                Log.d(Constants.LOGTAG,"here")
+                                if (response != null)  {
+                                    var fileName:String = "flag-"+flag.id+".svg"
+                                    var outputStream: OutputStream = openFileOutput(fileName,
+                                        Context.MODE_PRIVATE)
+                                    var printStream: PrintStream = PrintStream(outputStream)
+                                    printStream.print(response)
+                                    printStream.close()
+                                }
                             },
                             Response.ErrorListener {
                                 Log.d(Constants.LOGTAG,"that didnt work")
@@ -67,6 +78,13 @@ class MainActivity : AppCompatActivity() {
         )
 
 // Add the request to the RequestQueue.
+        request.setRetryPolicy(
+            DefaultRetryPolicy(
+                30000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            )
+        )
         queue.add(request)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
