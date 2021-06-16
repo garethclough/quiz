@@ -1,11 +1,14 @@
 package eu.electricocean.quiz
 
+import com.android.volley.RequestQueue
+
 object Constants {
     const val USER_NAME: String = "user_name"
     const val TOTAL_QUESTIONS: String = "total_question"
     const val CORRECT_ANSWERS: String = "correct_answers"
     const val LOGTAG: String = "quizlord"
     var flags: ArrayList<Flag> = ArrayList<Flag>()
+    var queue: RequestQueue? = null
 
     fun getQuestions(): ArrayList<Question> {
         var questionsList = ArrayList<Question>()

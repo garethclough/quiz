@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
+import com.caverock.androidsvg.SVG
 import eu.electricocean.quiz.databinding.ActivityQuizQuestionsBinding
 
 class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
@@ -42,6 +43,9 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         }
         options.clear()
         val question: Question? = mQuestionsList?.get(mCurrentPosition - 1)
+        val flag: Flag = Constants.flags.get(mCurrentPosition - 1)
+        var fileName:String = "flag-"+flag.id+".svg"
+        var svg:SVG = SVG.getFromAsset()
         binding.progressBar.progress = mCurrentPosition
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
         binding.tvQuestion.text = question!!.question
