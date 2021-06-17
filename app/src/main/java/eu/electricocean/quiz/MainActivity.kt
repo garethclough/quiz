@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+/*
         binding.btnStart.setOnClickListener {
             if(binding.etName.text.toString().isEmpty()) {
                 Toast.makeText(this,"Please enter your name",Toast.LENGTH_SHORT).show()
@@ -100,5 +101,6 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+ */
     }
 }
