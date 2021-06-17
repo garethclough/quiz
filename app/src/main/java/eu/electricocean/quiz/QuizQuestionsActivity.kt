@@ -46,7 +46,12 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         }
         options.clear()
         val question: Question? = mQuestionsList?.get(mCurrentPosition - 1)
-        val flag: Flag = Constants.flags.get(mCurrentPosition - 1)
+
+        var flagIndex: Int = (1..Constants.flags.size).random()
+        var correctOptionIndex = (1..question!!.options.size).random()
+        question!!.correctAnswer = correctOptionIndex
+        val flag: Flag = Constants.flags.get(flagIndex - 1)
+        question!!.options[correctOptionIndex-1] = flag.country.capitalizeWords()
         var fileName:String = "flag-"+flag.id+".svg"
         val fis: FileInputStream = openFileInput(fileName)
         var svg:SVG = SVG.getFromInputStream(fis)
