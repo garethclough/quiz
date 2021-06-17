@@ -1,12 +1,13 @@
 package eu.electricocean.quiz
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import com.caverock.androidsvg.SVG
 import eu.electricocean.quiz.databinding.ActivityQuizQuestionsBinding
+import java.io.FileInputStream
+
 
 class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityQuizQuestionsBinding
@@ -45,11 +48,26 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         val question: Question? = mQuestionsList?.get(mCurrentPosition - 1)
         val flag: Flag = Constants.flags.get(mCurrentPosition - 1)
         var fileName:String = "flag-"+flag.id+".svg"
-        var svg:SVG = SVG.getFromAsset()
+        val fis: FileInputStream = openFileInput(fileName)
+        var svg:SVG = SVG.getFromInputStream(fis)
+        val newBM = Bitmap.createBitmap(
+            Math.ceil(svg.documentWidth.toDouble()).toInt(),
+            Math.ceil(svg.documentHeight.toDouble()).toInt(),
+            Bitmap.Config.ARGB_8888
+        )
+        var bmcanvas = Canvas(newBM)
+
+        // Clear background to white
+
+        // Clear background to white
+        bmcanvas.drawRGB(255, 255, 255)
+
+        svg.renderToCanvas(bmcanvas)
+        binding.ivImage.setImageBitmap(newBM)
         binding.progressBar.progress = mCurrentPosition
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
         binding.tvQuestion.text = question!!.question
-        binding.ivImage.setImageResource(question!!.image!!)
+
 
         val params: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
