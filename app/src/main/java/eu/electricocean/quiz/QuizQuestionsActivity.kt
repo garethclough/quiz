@@ -1,13 +1,11 @@
 package eu.electricocean.quiz
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Typeface
-import android.graphics.Canvas
+import android.graphics.*
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -55,25 +53,52 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         var fileName:String = "flag-"+flag.id+".svg"
         val fis: FileInputStream = openFileInput(fileName)
         var svg:SVG = SVG.getFromInputStream(fis)
-        val newBM = Bitmap.createBitmap(
-            Math.ceil(svg.documentWidth.toDouble()).toInt(),
-            Math.ceil(svg.documentHeight.toDouble()).toInt(),
+        var imageView:ImageView = binding.ivImage
+
+        var flagWidth = svg.documentWidth.toInt()
+        var flagHeight = svg.documentHeight.toInt()
+
+        if (flagWidth <= 0) flagWidth = imageView.drawable.intrinsicWidth
+        if (flagHeight <= 0) flagHeight = imageView.drawable.intrinsicHeight
+
+        val svgBitmap = Bitmap.createBitmap(
+            flagWidth,
+            flagHeight,
             Bitmap.Config.ARGB_8888
         )
-        var bmcanvas = Canvas(newBM)
-
-        // Clear background to white
+        var bmcanvas = Canvas(svgBitmap)
 
         // Clear background to white
         bmcanvas.drawRGB(255, 255, 255)
-
         svg.renderToCanvas(bmcanvas)
-        binding.ivImage.setImageBitmap(newBM)
+
+/*
+        val newBM = Bitmap.createBitmap(
+            imageView.drawable.intrinsicWidth,
+            imageView.drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
+*/
+        binding.ivImage.setImageBitmap(svgBitmap)
         binding.progressBar.progress = mCurrentPosition
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
-        binding.tvQuestion.text = question!!.question
+//        binding.tvQuestion.text = question!!.question
 
-        
+        var optionsRemaining = question.options.size - 1
+
+        var optionIndex = 1
+        while(optionsRemaining > 0) {
+            var flagOptionIndex = (1..Constants.flags.size).random()
+            if (flagIndex != flagOptionIndex) {
+                if (optionIndex == correctOptionIndex) {
+                    optionIndex++
+                }
+                var optionFlag: Flag = Constants.flags[flagOptionIndex-1]
+                question.options[optionIndex-1] = optionFlag.country.capitalizeWords()
+                optionsRemaining--
+                optionIndex++
+            }
+        }
 
         val params: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)

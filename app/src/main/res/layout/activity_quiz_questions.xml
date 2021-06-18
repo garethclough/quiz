@@ -12,22 +12,23 @@
         android:gravity="center"
         android:padding="16dp"
         android:background="@color/white">
+
         <TextView
             android:id="@+id/tv_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:gravity="center"
+            android:text="Which country does this flag belong to?"
             android:textColor="#363a43"
-            android:textSize="22sp"
-            android:text="What country does this flag belong to?"/>
+            android:textSize="20sp" />
+
         <ImageView
             android:id="@+id/iv_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_flag_of_argentina"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="213dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_flag_of_argentina" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,52 +65,6 @@
         android:gravity="center"
         android:background="@color/white"/>
 
-
-<!--
-        <TextView
-            android:id="@+id/tv_option_one"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/default_option_border_bg"
-            android:gravity="center"
-            android:padding="15dp"
-            android:textColor="#7A8089"
-            android:textSize="18sp"
-            tools:text="Apple"/>
-        <TextView
-            android:id="@+id/tv_option_two"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/default_option_border_bg"
-            android:gravity="center"
-            android:padding="15dp"
-            android:textColor="#7A8089"
-            android:textSize="18sp"
-            tools:text="Apple"/>
-        <TextView
-            android:id="@+id/tv_option_three"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/default_option_border_bg"
-            android:gravity="center"
-            android:padding="15dp"
-            android:textColor="#7A8089"
-            android:textSize="18sp"
-            tools:text="Apple"/>
-        <TextView
-            android:id="@+id/tv_option_four"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/default_option_border_bg"
-            android:gravity="center"
-            android:padding="15dp"
-            android:textColor="#7A8089"
-            android:textSize="18sp"
-            tools:text="Apple"/>-->
         <Button
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"

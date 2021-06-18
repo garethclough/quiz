@@ -34,15 +34,7 @@
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold"/>
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="Username"
-        android:textColor="@android:color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"/>
+
     <TextView
         android:id="@+id/tv_score"
         android:layout_width="wrap_content"
@@ -51,14 +43,14 @@
         android:text="Your score is 9 out of 10"
         android:textColor="@android:color/secondary_text_dark"
         android:textSize="20sp"/>
+
     <Button
         android:id="@+id/btn_finish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/design_default_color_primary"
-        android:text="FINISH"
+        android:text="Play Again"
         android:textSize="18sp"
-        android:textStyle="bold"
-        />
+        android:textStyle="bold" />
 </LinearLayout>
