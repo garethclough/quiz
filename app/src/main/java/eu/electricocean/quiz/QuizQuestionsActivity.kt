@@ -73,6 +73,8 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
         binding.tvQuestion.text = question!!.question
 
+        
+
         val params: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         params.setMargins(10, 10, 10, 10)
