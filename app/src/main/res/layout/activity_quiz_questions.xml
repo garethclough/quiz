@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
     tools:context=".QuizQuestionsActivity">
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_margin="5dp"
         android:gravity="center"
+        android:text="Which country does this flag belong to?"
+        android:textColor="#363a43"
+        android:textSize="20sp" />
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical"
         android:padding="16dp"
-        android:background="@color/white">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tv_question"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:gravity="center"
-            android:text="Which country does this flag belong to?"
-            android:textColor="#363a43"
-            android:textSize="20sp" />
+
 
         <ImageView
             android:id="@+id/iv_image"
@@ -29,23 +38,34 @@
             android:layout_height="213dp"
             android:layout_marginTop="0dp"
             android:src="@drawable/ic_flag_of_argentina" />
+
+        <LinearLayout
+            android:id="@+id/option_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center|bottom"
+            android:orientation="vertical" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:indeterminate="false"
                 android:max="10"
                 android:minHeight="50dp"
-                android:progress="0"
-                android:indeterminate="false"/>
+                android:progress="0" />
+
             <TextView
                 android:id="@+id/tv_progress"
                 android:layout_width="wrap_content"
@@ -55,24 +75,21 @@
                 android:textColor="#363a43"
                 android:textColorHint="#7A8089"
                 android:textSize="14sp"
-                tools:text="0/10"/>
+                tools:text="0/10" />
         </LinearLayout>
-    <LinearLayout
-        android:id="@+id/option_layout"
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/white"/>
-
-        <Button
-            android:id="@+id/btn_submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/design_default_color_primary"
-            android:text="SUBMIT"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-    </LinearLayout>
-</ScrollView>
+        android:background="@color/design_default_color_primary"
+        android:text="SUBMIT"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="-4dp"
+        tools:layout_editor_absoluteY="684dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

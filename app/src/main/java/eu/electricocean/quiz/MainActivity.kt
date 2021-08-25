@@ -25,6 +25,11 @@ class MainActivity : AppCompatActivity() {
     private var importFlagsDone: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        var dbHelper: QuizDbHelper = QuizDbHelper(this)
+
+        Log.d(Constants.LOGTAG,"On Create")
+        val version = dbHelper.getVersion()
+        Log.d(Constants.LOGTAG,"Version "+version)
         super.onCreate(savedInstanceState)
 
         // Instantiate the RequestQueue.
@@ -77,6 +82,7 @@ class MainActivity : AppCompatActivity() {
                         val flagId: Int = flagJson.getInt("flag_id")
                         var flag = Flag(flagId,country)
                         Constants.flags.add(flag)
+                        dbHelper.addFlag(flag)
                         Log.d(Constants.LOGTAG,country)
                     }
                     for(flag in Constants.flags) {

@@ -19,11 +19,15 @@ import java.io.FileInputStream
 class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityQuizQuestionsBinding
     private var mCurrentPosition:Int = 1
-    private var mQuestionsList: ArrayList<Question>? = null
+    private var mFlagList: ArrayList<Flag> = ArrayList()
     private var mSelectedOptionPosition : Int = 0
     private var mCorrectAnswers: Int = 0
+    private var numQuestions = 10
     private var mUserName: String? = null
+    private var numOptions: Int = 4
+    private var currentOptions: Array<String> = arrayOf<String>()
     private var options: ArrayList<TextView> = ArrayList()
+    private var correctOptionIndex: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +37,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         mUserName = intent.getStringExtra(Constants.USER_NAME)
 
         var dbHelper: QuizDbHelper = QuizDbHelper(this)
-        mQuestionsList = dbHelper.getAllQuestions()
+        mFlagList = dbHelper.  getAllFlags()
         setQuestion()
         binding.btnSubmit.setOnClickListener(this)
     }
@@ -43,13 +47,11 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             binding.optionLayout.removeView(option as View)
         }
         options.clear()
-        val question: Question? = mQuestionsList?.get(mCurrentPosition - 1)
 
-        var flagIndex: Int = (1..Constants.flags.size).random()
-        var correctOptionIndex = (1..question!!.options.size).random()
-        question!!.correctAnswer = correctOptionIndex
-        val flag: Flag = Constants.flags.get(flagIndex - 1)
-        question!!.options[correctOptionIndex-1] = flag.country.capitalizeWords()
+        var flagIndex: Int = (1..mFlagList.size).random()
+        correctOptionIndex = (1..numOptions).random()
+        val flag: Flag = mFlagList.get(flagIndex - 1)
+        val correctOption = flag.country.capitalizeWords()
         var fileName:String = "flag-"+flag.id+".svg"
         val fis: FileInputStream = openFileInput(fileName)
         var svg:SVG = SVG.getFromInputStream(fis)
@@ -67,34 +69,28 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
             Bitmap.Config.ARGB_8888
         )
         var bmcanvas = Canvas(svgBitmap)
+        var questionOptions = Array(numOptions) {""}
 
         // Clear background to white
         bmcanvas.drawRGB(255, 255, 255)
         svg.renderToCanvas(bmcanvas)
 
-/*
-        val newBM = Bitmap.createBitmap(
-            imageView.drawable.intrinsicWidth,
-            imageView.drawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
-*/
         binding.ivImage.setImageBitmap(svgBitmap)
         binding.progressBar.progress = mCurrentPosition
         binding.tvProgress.text = "$mCurrentPosition" + "/" + binding.progressBar.max
 //        binding.tvQuestion.text = question!!.question
 
-        var optionsRemaining = question.options.size - 1
-
+        questionOptions[correctOptionIndex-1] = correctOption;
+        var optionsRemaining = numOptions - 1
         var optionIndex = 1
         while(optionsRemaining > 0) {
-            var flagOptionIndex = (1..Constants.flags.size).random()
+            var flagOptionIndex = (1..mFlagList.size).random()
             if (flagIndex != flagOptionIndex) {
                 if (optionIndex == correctOptionIndex) {
                     optionIndex++
                 }
                 var optionFlag: Flag = Constants.flags[flagOptionIndex-1]
-                question.options[optionIndex-1] = optionFlag.country.capitalizeWords()
+                questionOptions[optionIndex-1] = optionFlag.country.capitalizeWords()
                 optionsRemaining--
                 optionIndex++
             }
@@ -103,7 +99,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         val params: LinearLayout.LayoutParams =
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         params.setMargins(10, 10, 10, 10)
-        for(optionText in question.options!!) {
+        for(optionText in questionOptions) {
             val tvOption = TextView(this)
             tvOption.setId(View.generateViewId())
             tvOption.setText(optionText)
@@ -119,7 +115,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         defaultOptionsView()
-        if (mCurrentPosition == mQuestionsList!!.size) {
+        if (mCurrentPosition == numQuestions) {
             binding.btnSubmit.text = "FINISH"
         } else {
             binding.btnSubmit.text = "SUBMIT"
@@ -151,27 +147,26 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 if (mSelectedOptionPosition == 0) {
                     mCurrentPosition++
                     when {
-                        mCurrentPosition <= mQuestionsList!!.size -> {
+                        mCurrentPosition <= numQuestions -> {
                             setQuestion();
                         }
                         else -> {
                             val intent = Intent(this,ResultActivity::class.java)
                             intent.putExtra(Constants.USER_NAME,mUserName)
                             intent.putExtra(Constants.CORRECT_ANSWERS,mCorrectAnswers)
-                            intent.putExtra(Constants.TOTAL_QUESTIONS,mQuestionsList!!.size)
+                            intent.putExtra(Constants.TOTAL_QUESTIONS,numQuestions)
                             startActivity(intent)
                             finish()
                         }
                     }
                 } else {
-                    val question = mQuestionsList?.get(mCurrentPosition - 1)
-                    if (question!!.correctAnswer != mSelectedOptionPosition) {
+                    if (correctOptionIndex != mSelectedOptionPosition) {
                         answerView(mSelectedOptionPosition,R.drawable.wrong_option_border_bg)
                     } else {
                         mCorrectAnswers++
                     }
-                    answerView(question.correctAnswer!!,R.drawable.correct_option_border_bg)
-                    if(mCurrentPosition == mQuestionsList!!.size) {
+                    answerView(correctOptionIndex,R.drawable.correct_option_border_bg)
+                    if(mCurrentPosition == numQuestions) {
                         binding.btnSubmit.text = "FINISH"
                     } else {
                         binding.btnSubmit.text = "GO TO NEXT QUESTION"

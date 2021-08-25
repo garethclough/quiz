@@ -10,80 +10,72 @@ class QuizDbHelper(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,nul
     companion object {
         private val DATABASE_NAME = "quiz.db"
         private val DATABASE_VERSION = 1
-        private val TABLE_QUESTION = "question"
-        private val TABLE_QUESTION_OPTION = "question_option"
-        private val KEY_OPTION_ID = "option_id"
-        private val KEY_QUESTION = "question"
-        private val KEY_QUESTION_IMAGE_ID = "question_image_id"
-        private val KEY_CORRECT_ANSWER = "correct_answer"
-        private val KEY_OPTION = "option"
-        private val KEY_QUESTION_ID = "question_id"
-        private val KEY_OPTION_NUMBER = "option_number"
+        private val TABLE_FLAG = "flag"
+        private val KEY_FLAG_ID = "flag_id"
+        private val KEY_FLAG_COUNTRY = "flag_country"
+        private val KEY_FLAG_DOWNLOADED = "flag_downloaded"
+        private val TABLE_VERSION = "quiz_version"
+        private val KEY_VERSION = "version_number"
+        private val KEY_UPDATED = "version_update"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val CREATE_QUESTION_TABLE: String = "CREATE TABLE "+TABLE_QUESTION+"("+ KEY_QUESTION_ID+" INTEGER PRIMARY KEY,"+KEY_QUESTION+" TEXT,"+ KEY_CORRECT_ANSWER+" INTEGER,"+ KEY_QUESTION_IMAGE_ID+" INTEGER)"
-        db?.execSQL(CREATE_QUESTION_TABLE)
-        val CREATE_OPTION_TABLE: String = "CREATE TABLE "+TABLE_QUESTION_OPTION+"("+ KEY_OPTION_ID+" INTEGER PRIMARY KEY,"+ KEY_QUESTION_ID+" INTEGER,"+KEY_OPTION+" TEXT,"+ KEY_OPTION_NUMBER+" INTEGER)"
-        db?.execSQL(CREATE_OPTION_TABLE)
-        addQuestions(db,Constants.getQuestions())
+        val CREATE_VERSION_TABLE: String = "CREATE TABLE "+TABLE_VERSION+"("+ KEY_VERSION+" INTEGER PRIMARY KEY,"+ KEY_UPDATED+" TEXT)"
+        db?.execSQL(CREATE_VERSION_TABLE)
+        val CREATE_FLAG_TABLE: String = "CREATE TABLE "+TABLE_FLAG+"("+ KEY_FLAG_ID+" INTEGER PRIMARY KEY,"+ KEY_FLAG_COUNTRY+" TEXT,"+ KEY_FLAG_DOWNLOADED+" INTEGER)"
+        db?.execSQL(CREATE_FLAG_TABLE)
+        db?.execSQL("INSERT INTO "+TABLE_VERSION+" ("+KEY_VERSION+","+KEY_UPDATED+") VALUES (0,time('now'))")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db!!.execSQL("DROP TABLE IF EXISTS "+TABLE_QUESTION)
+        db!!.execSQL("DROP TABLE IF EXISTS "+TABLE_FLAG)
+        onCreate(db)
+        db!!.execSQL("DROP TABLE IF EXISTS "+TABLE_VERSION)
         onCreate(db)
     }
 
-    fun addQuestions(db: SQLiteDatabase?,questionList: ArrayList<Question>) {
-        for(question in questionList) {
-            addQuestion(db,question)
-        }
+    fun setVersion(version: Int) {
+        val db = getReadableDatabase()
+        db.execSQL("UPDATE "+TABLE_VERSION+" SET "+KEY_VERSION+" = "+version+","+ KEY_UPDATED+" = NOW()")
     }
 
-    fun addQuestion(db: SQLiteDatabase?,q: Question): Long {
-        var contentValues = ContentValues()
-        contentValues.put(KEY_QUESTION_ID,q.id)
-        contentValues.put(KEY_QUESTION,q.question)
-        contentValues.put(KEY_CORRECT_ANSWER,q.correctAnswer)
-        contentValues.put(KEY_QUESTION_IMAGE_ID,q.image)
-        var success = db!!.insert(TABLE_QUESTION,null,contentValues)
-
-        var counter = 1
-        for(option in q.options!!) {
-            val contentValues = ContentValues()
-            contentValues.put(KEY_OPTION,option)
-            contentValues.put(KEY_QUESTION_ID,q.id)
-            contentValues.put(KEY_OPTION_NUMBER,counter)
-            db.insert(TABLE_QUESTION_OPTION,null,contentValues)
-            counter++
+    fun getVersion(): Int
+    {
+        val db = getReadableDatabase()
+        var version: Int = 0
+        val c:Cursor = db.rawQuery("SELECT * FROM " + TABLE_VERSION, null);
+        if (c.moveToFirst()) {
+            version = c.getInt(c.getColumnIndex(KEY_VERSION))
         }
+        c.close()
+        return version
+    }
+
+    fun addFlag(f: Flag): Long {
+        val db = getReadableDatabase()
+        var contentValues = ContentValues()
+        contentValues.put(KEY_FLAG_ID,f.id)
+        contentValues.put(KEY_FLAG_COUNTRY,f.country)
+        contentValues.put(KEY_FLAG_DOWNLOADED,false)
+        var success = db!!.insert(TABLE_FLAG,null,contentValues)
+
         return success
     }
 
-    fun getAllQuestions(): ArrayList<Question> {
-        val questionList = ArrayList<Question>()
+    fun getAllFlags(): ArrayList<Flag> {
+        val flagList = ArrayList<Flag>()
         val db = getReadableDatabase()
-        val c:Cursor = db.rawQuery("SELECT * FROM " + TABLE_QUESTION, null);
+        val c:Cursor = db.rawQuery("SELECT * FROM " + TABLE_FLAG, null);
         if (c.moveToFirst()) {
             do {
-                var question: Question = Question()
-                question.question = c.getString(c.getColumnIndex(KEY_QUESTION))
-                question.id = c.getInt(c.getColumnIndex(KEY_QUESTION_ID))
-                question.correctAnswer = c.getInt(c.getColumnIndex(KEY_CORRECT_ANSWER))
-                question.image = c.getInt(c.getColumnIndex(KEY_QUESTION_IMAGE_ID))
-                var optionCursor:Cursor = db.rawQuery("SELECT * FROM " + TABLE_QUESTION_OPTION+" WHERE "+KEY_QUESTION_ID+" = "+question.id, null);
-                if (optionCursor.moveToFirst()) {
-                    do {
-                        var option: String = optionCursor.getString(optionCursor.getColumnIndex(KEY_OPTION))
-                        question.options?.add(option)
-                    } while (optionCursor.moveToNext())
-                }
-                optionCursor.close()
-
-                questionList.add(question)
+                var country = c.getString(c.getColumnIndex(KEY_FLAG_COUNTRY))
+                var id = c.getInt(c.getColumnIndex(KEY_FLAG_ID))
+                var loaded = c.getInt(c.getColumnIndex(KEY_FLAG_DOWNLOADED)) == 1
+                var flag: Flag =Flag(id,country,loaded)
+                flagList.add(flag)
             } while (c.moveToNext())
         }
         c.close()
-        return questionList
+        return flagList
     }
 }
