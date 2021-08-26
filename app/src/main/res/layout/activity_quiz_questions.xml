@@ -8,15 +8,35 @@
     android:background="@color/white"
     android:gravity="center"
     tools:context=".QuizQuestionsActivity">
+
     <TextView
         android:id="@+id/tv_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="Which country does this flag belong to?"
         android:textColor="#363a43"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_image"
+        android:layout_width="0dp"
+        android:layout_height="277dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_flag_of_argentina"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_question" />
+
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
@@ -25,19 +45,11 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/iv_image">
 
-
-
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="match_parent"
-            android:layout_height="213dp"
-            android:layout_marginTop="0dp"
-            android:src="@drawable/ic_flag_of_argentina" />
 
         <LinearLayout
             android:id="@+id/option_layout"
@@ -48,37 +60,41 @@
             android:gravity="center|bottom"
             android:orientation="vertical" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/btn_submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.46"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:indeterminate="false"
+            android:max="10"
+            android:minHeight="50dp"
+            android:progress="0" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:indeterminate="false"
-                android:max="10"
-                android:minHeight="50dp"
-                android:progress="0" />
-
-            <TextView
-                android:id="@+id/tv_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="15dp"
-                android:textColor="#363a43"
-                android:textColorHint="#7A8089"
-                android:textSize="14sp"
-                tools:text="0/10" />
-        </LinearLayout>
-
-
+        <TextView
+            android:id="@+id/tv_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textColor="#363a43"
+            android:textColorHint="#7A8089"
+            android:textSize="14sp"
+            tools:text="0/10" />
     </LinearLayout>
 
     <Button
@@ -90,6 +106,7 @@
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="-4dp"
-        tools:layout_editor_absoluteY="684dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
