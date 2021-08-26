@@ -11,6 +11,7 @@ import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import eu.electricocean.quiz.databinding.ActivityMainBinding
@@ -70,43 +71,57 @@ class MainActivity : AppCompatActivity() {
 
 
         // Request a string response from the provided URL.
-        val request = JsonArrayRequest(
+        val request = JsonObjectRequest(
             Request.Method.GET,
             url,
             null,
             { response ->
                 try {
-                    for (i in 0 until response.length()) {
-                        val flagJson: JSONObject = response.getJSONObject(i)
-                        val country: String = flagJson.getString("country_name")
-                        val flagId: Int = flagJson.getInt("flag_id")
-                        var flag = Flag(flagId,country)
-                        Constants.flags.add(flag)
-                        dbHelper.addFlag(flag)
-                        Log.d(Constants.LOGTAG,country)
-                    }
-                    for(flag in Constants.flags) {
-                        val flagImageUrl: String = "http://quiz.electricocean.eu/flag/"+flag.id+".svg"
-                        val flagImageRequest = StringRequest(
-                            Request.Method.GET,
-                            flagImageUrl,
-                            Response.Listener<String>{ response ->
-                                if (response != null)  {
-                                    var fileName:String = "flag-"+flag.id+".svg"
-                                    var outputStream: OutputStream = openFileOutput(fileName,
-                                        Context.MODE_PRIVATE)
-                                    var printStream: PrintStream = PrintStream(outputStream)
-                                    printStream.print(response)
-                                    printStream.close()
-                                    flag.loaded = true
+                    Log.d(Constants.LOGTAG,"Received response:"+url)
+                    val flagJsonArray = response.getJSONArray("flags")
+                    val quizJsonObject = response.getJSONObject("quiz")
+                    val latestVersion: Int = quizJsonObject.getInt("quiz_version")
+                    Log.d(Constants.LOGTAG,"Latest version: "+latestVersion)
+                    if (latestVersion != version) {
+                        dbHelper.clearFlags()
+                        for (i in 0 until flagJsonArray.length()) {
+                            val flagJson: JSONObject = flagJsonArray.getJSONObject(i)
+                            val country: String = flagJson.getString("country_name")
+                            val flagId: Int = flagJson.getInt("flag_id")
+                            var flag = Flag(flagId, country)
+                            Constants.flags.add(flag)
+                            dbHelper.addFlag(flag)
+                            Log.d(Constants.LOGTAG, country)
+                        }
+                        for (flag in Constants.flags) {
+                            val flagImageUrl: String =
+                                "http://quiz.electricocean.eu/flag/" + flag.id + ".svg"
+                            val flagImageRequest = StringRequest(
+                                Request.Method.GET,
+                                flagImageUrl,
+                                Response.Listener<String> { response ->
+                                    if (response != null) {
+                                        var fileName: String = "flag-" + flag.id + ".svg"
+                                        var outputStream: OutputStream = openFileOutput(
+                                            fileName,
+                                            Context.MODE_PRIVATE
+                                        )
+                                        var printStream: PrintStream = PrintStream(outputStream)
+                                        printStream.print(response)
+                                        printStream.close()
+                                        flag.loaded = true
+                                        dbHelper.setFlagDownloaded(flag)
+                                    }
+                                },
+                                Response.ErrorListener {
+                                    Log.d(Constants.LOGTAG, "that didnt work")
                                 }
-                            },
-                            Response.ErrorListener {
-                                Log.d(Constants.LOGTAG,"that didnt work")
-                            }
-                        )
-                        queue.add(flagImageRequest)
+                            )
+                            queue.add(flagImageRequest)
+                        }
+                        dbHelper.setVersion(latestVersion)
                     }
+
                     importFlagsDone = true
                 } catch (e: JSONException) {
                     Log.d(Constants.LOGTAG,e.message!!)

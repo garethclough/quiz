@@ -9,7 +9,7 @@ import android.database.Cursor;
 class QuizDbHelper(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VERSION) {
     companion object {
         private val DATABASE_NAME = "quiz.db"
-        private val DATABASE_VERSION = 1
+        private val DATABASE_VERSION = 2
         private val TABLE_FLAG = "flag"
         private val KEY_FLAG_ID = "flag_id"
         private val KEY_FLAG_COUNTRY = "flag_country"
@@ -29,14 +29,13 @@ class QuizDbHelper(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,nul
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL("DROP TABLE IF EXISTS "+TABLE_FLAG)
-        onCreate(db)
         db!!.execSQL("DROP TABLE IF EXISTS "+TABLE_VERSION)
         onCreate(db)
     }
 
     fun setVersion(version: Int) {
         val db = getReadableDatabase()
-        db.execSQL("UPDATE "+TABLE_VERSION+" SET "+KEY_VERSION+" = "+version+","+ KEY_UPDATED+" = NOW()")
+        db.execSQL("UPDATE "+TABLE_VERSION+" SET "+KEY_VERSION+" = "+version+","+ KEY_UPDATED+" = time('now')")
     }
 
     fun getVersion(): Int
@@ -49,6 +48,16 @@ class QuizDbHelper(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,nul
         }
         c.close()
         return version
+    }
+
+    fun clearFlags() {
+        val db = getReadableDatabase()
+        db.execSQL("DELETE FROM " + TABLE_FLAG)
+    }
+
+    fun setFlagDownloaded(f: Flag) {
+        val db = getReadableDatabase()
+        db.execSQL("UPDATE " + TABLE_FLAG+ " SET "+ KEY_FLAG_DOWNLOADED + " = 1 WHERE "+ KEY_FLAG_ID+"="+f.id)
     }
 
     fun addFlag(f: Flag): Long {

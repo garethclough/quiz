@@ -89,7 +89,7 @@ class QuizQuestionsActivity : AppCompatActivity(), View.OnClickListener {
                 if (optionIndex == correctOptionIndex) {
                     optionIndex++
                 }
-                var optionFlag: Flag = Constants.flags[flagOptionIndex-1]
+                var optionFlag: Flag = mFlagList[flagOptionIndex-1]
                 questionOptions[optionIndex-1] = optionFlag.country.capitalizeWords()
                 optionsRemaining--
                 optionIndex++
